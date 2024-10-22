@@ -2639,6 +2639,13 @@ spec:
                 - key
                 - name
                 type: object
+              minimumKubeletVersion:
+                description: |-
+                  MinimumKubeletVersion is the lowest version of a kubelet that can join a this hosted cluster.
+                  Specifically, the hosted apiserver will deny (most) authorization requests of kubelets that are older
+                  than the specified version.
+                pattern: ^[0-9]*\.[0-9]*\.[0-9]*$
+                type: string
               networking:
                 description: |-
                   Networking specifies network configuration for the cluster.
