@@ -720,7 +720,7 @@ github.com/opencontainers/runc/libcontainer/user
 ## explicit; go 1.19
 github.com/opencontainers/selinux/go-selinux
 github.com/opencontainers/selinux/pkg/pwalkdir
-# github.com/openshift/api v0.0.0-20241015143726-5afd6c371db4
+# github.com/openshift/api v0.0.0-20241015143726-5afd6c371db4 => github.com/haircommander/api v0.0.0-20241024145105-6471c90fdf02
 ## explicit; go 1.22.0
 github.com/openshift/api
 github.com/openshift/api/annotations
@@ -2396,3 +2396,4 @@ sigs.k8s.io/yaml/goyaml.v3
 # k8s.io/csi-translation-lib => k8s.io/csi-translation-lib v0.31.1
 # k8s.io/kubernetes => k8s.io/kubernetes v0.31.1
 # k8s.io/mount-utils => k8s.io/mount-utils v0.31.1
+# github.com/openshift/api => github.com/haircommander/api v0.0.0-20241024145105-6471c90fdf02

@@ -258,3 +258,5 @@ replace (
 	k8s.io/kubernetes => k8s.io/kubernetes v0.31.1
 	k8s.io/mount-utils => k8s.io/mount-utils v0.31.1
 )
+
+replace github.com/openshift/api => github.com/haircommander/api v0.0.0-20241024145105-6471c90fdf02
