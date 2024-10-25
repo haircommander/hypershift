@@ -259,4 +259,7 @@ replace (
 	k8s.io/mount-utils => k8s.io/mount-utils v0.31.1
 )
 
-replace github.com/openshift/api => github.com/haircommander/api v0.0.0-20241024145105-6471c90fdf02
+replace (
+	github.com/openshift/api => github.com/haircommander/api v0.0.0-20241024145105-6471c90fdf02
+	github.com/openshift/library-go => github.com/haircommander/library-go v0.0.0-20241025164706-3abe6146c94b
+)
