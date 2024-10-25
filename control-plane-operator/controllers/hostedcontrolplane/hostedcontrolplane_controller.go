@@ -85,6 +85,7 @@ import (
 	"github.com/openshift/hypershift/support/thirdparty/library-go/pkg/image/reference"
 	"github.com/openshift/hypershift/support/upsert"
 	"github.com/openshift/hypershift/support/util"
+	nodelib "github.com/openshift/library-go/pkg/config/node"
 	prometheusoperatorv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
@@ -381,7 +382,7 @@ func (r *HostedControlPlaneReconciler) Reconcile(ctx context.Context, req ctrl.R
 			Type:               string(hyperv1.ValidHostedControlPlaneConfiguration),
 			ObservedGeneration: hostedControlPlane.Generation,
 		}
-		if err := r.validateConfigAndClusterCapabilities(hostedControlPlane); err != nil {
+		if err := r.validateConfigAndClusterCapabilities(ctx, hostedControlPlane); err != nil {
 			condition.Status = metav1.ConditionFalse
 			condition.Message = err.Error()
 			condition.Reason = hyperv1.InsufficientClusterCapabilitiesReason
@@ -834,10 +835,24 @@ func healthCheckKASEndpoint(ingressPoint string, port int) error {
 	return nil
 }
 
-func (r *HostedControlPlaneReconciler) validateConfigAndClusterCapabilities(hc *hyperv1.HostedControlPlane) error {
+func (r *HostedControlPlaneReconciler) validateConfigAndClusterCapabilities(ctx context.Context, hc *hyperv1.HostedControlPlane) error {
 	for _, svc := range hc.Spec.Services {
 		if svc.Type == hyperv1.Route && !r.ManagementClusterCapabilities.Has(capabilities.CapabilityRoute) {
 			return fmt.Errorf("cluster does not support Routes, but service %q is exposed via a Route", svc.Service)
+		}
+	}
+
+	if hc.Spec.MinimumKubeletVersion != "" {
+		guestClient, err := r.GetGuestClusterClient(ctx, hc)
+		if err != nil {
+			// TODO: should we not error here?
+			// If we fail to get the guest client then maybe the guest
+			// cluster isn't setup yet, in which case we don't need to do any
+			// validation that all of the existing nodes are new enough
+			return fmt.Errorf("failed to get guest client %v", err)
+		}
+		if err := nodelib.ValidateMinimumKubeletVersion(guestClient.CoreV1(), hc.Spec.MinimumKubeletVersion); err != nil {
+			return fmt.Errorf("validating failed for %s: %v", hc.Spec.MinimumKubeletVersion, err)
 		}
 	}
 	return nil
